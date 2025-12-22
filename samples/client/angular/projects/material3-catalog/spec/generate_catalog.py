@@ -833,12 +833,20 @@ def extract_examples_from_md(filepath: str) -> List[Dict]:
             
             # Use TextStripper on accumulated text
             full_text_blob = "\n".join(current_text_lines)
-            # Remove comment markers to expose content to parser
-            full_text_blob = full_text_blob.replace('<!--', '').replace('-->', '')
             
             stripper = TextStripper()
             stripper.feed(full_text_blob)
             final_description = stripper.get_text()
+
+            # Clean up Markdown Images
+            # 1. Replace images WITH titles with just the title
+            # Use DOTALL to match newlines in alt text
+            final_description = re.sub(r'!\[.*?\]\([^\)]*?\s+"([^"]+)"\)', r'\1', final_description, flags=re.DOTALL)
+            # 2. Remove images WITHOUT titles
+            final_description = re.sub(r'!\[.*?\]\([^\)]*?\)', '', final_description, flags=re.DOTALL)
+            
+            # Clean up extra newlines created by removals
+            final_description = re.sub(r'\n{3,}', '\n\n', final_description).strip()
 
             # Process Block
             if '<script' in block_content or '<style' in block_content or '<svg' in block_content:
@@ -1065,6 +1073,20 @@ def generate_library_json(components: List[tuple], examples_raw: List[Dict], out
         else:
             # Render examples from Markdown
             for i, ex_data in enumerate(examples):
+                # Add Description Component if present
+                desc_text = ex_data.get('description', '').strip()
+                if desc_text:
+                     text_id = f"desc-{cls_name}-{i}"
+                     flat_components.append({
+                         "id": text_id,
+                         "component": {
+                             "Text": {
+                                 "text": {"literalString": desc_text}
+                             }
+                         }
+                     })
+                     root_ids.append(text_id)
+
                 for j, node in enumerate(ex_data['nodes']):
                     import copy
                     node_copy = copy.deepcopy(node)

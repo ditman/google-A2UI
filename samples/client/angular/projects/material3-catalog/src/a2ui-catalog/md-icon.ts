@@ -2,6 +2,7 @@ import { Component, computed, input, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA }
 import { CommonModule } from '@angular/common';
 import { DynamicComponent } from '@a2ui/angular';
 import { Primitives } from '@a2ui/lit/0.8';
+import '@material/web/icon/icon.js';
 
 @Component({
   selector: 'catalog-md-icon',

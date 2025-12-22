@@ -42,6 +42,7 @@
     "@angular/platform-server": "^21.0.3",
     "@angular/ssr": "^21.0.2",
     "@google/genai": "^1.22.0",
+    "@material/web": "^2.4.1",
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "excalibur": "0.31.0",

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DynamicComponent } from '@a2ui/angular';
 import { Primitives } from '@a2ui/lit/0.8';
+import '@material/web/checkbox/checkbox.js';
 
 @Component({
   selector: 'catalog-md-checkbox',

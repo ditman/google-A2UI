@@ -123,3 +123,4 @@ def try_activate_a2ui_extension(context: RequestContext) -> bool:
         context.add_activated_extension(A2UI_EXTENSION_URI)
         return True
     return False
+

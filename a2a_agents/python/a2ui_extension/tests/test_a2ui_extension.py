@@ -100,3 +100,5 @@ def test_try_activate_a2ui_extension_not_requested():
 
     assert not a2ui_extension.try_activate_a2ui_extension(context)
     context.add_activated_extension.assert_not_called()
+
+

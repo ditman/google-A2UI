@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import MarkdownIt from "markdown-it/index.js";
+import markdownit from 'markdown-it';
 import { sanitizer } from "./sanitizer";
 
 /**
@@ -33,7 +33,7 @@ export type TagClassMap = Record<string, string[]>;
  * This renderer does not perform any sanitization of the outgoing HTML.
  */
 class MarkdownItCore {
-  private markdownIt = MarkdownIt({
+  private markdownIt = markdownit({
     highlight: (str, lang) => {
       switch (lang) {
         case "html": {

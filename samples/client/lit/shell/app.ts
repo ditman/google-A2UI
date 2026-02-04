@@ -504,7 +504,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
-            ></a2-uisurface>`;
+            ></a2ui-surface>`;
       }
     )}
     </section>`;

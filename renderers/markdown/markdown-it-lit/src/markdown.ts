@@ -18,11 +18,13 @@ import { noChange } from "lit";
 import {
   Directive,
   DirectiveParameters,
+  DirectiveResult,
   Part,
   directive,
 } from "lit/directive.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { markdownRenderer } from "@a2ui/markdown-it-shared";
+import * as Types from "@a2ui/web_core/types/types";
 
 /**
  * A Lit directive that renders markdown to HTML.
@@ -30,7 +32,7 @@ import { markdownRenderer } from "@a2ui/markdown-it-shared";
  * This directive is intended to be used by the A2UI Lit renderer to render
  * markdown to HTML.
  */
-class MarkdownDirective extends Directive {
+class MarkdownItDirective extends Directive implements Types.MarkdownRenderer<DirectiveResult> {
   private lastValue: string | null = null;
   private lastTagClassMap: string | null = null;
 
@@ -50,10 +52,10 @@ class MarkdownDirective extends Directive {
   /**
    * Renders the markdown string to HTML.
    */
-  render(value: string, tagClassMap?: Record<string, string[]>) {
+  render(value: string, tagClassMap?: Types.MarkdownRendererTagClassMap) {
     const htmlString = markdownRenderer.render(value, tagClassMap);
     return unsafeHTML(htmlString);
   }
 }
 
-export const markdown = directive(MarkdownDirective);
+export const markdown = directive(MarkdownItDirective);

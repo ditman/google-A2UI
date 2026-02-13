@@ -14,101 +14,15 @@
  limitations under the License.
  */
 
-import { inject, Injectable, SecurityContext } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import MarkdownIt from 'markdown-it';
+import { /*inject,*/ Injectable } from '@angular/core';
+// import { DomSanitizer } from '@angular/platform-browser';
 
+// TODO: Make this a noop/minimal Markdown renderer
 @Injectable({ providedIn: 'root' })
 export class MarkdownRenderer {
-  private originalClassMap = new Map<string, any>();
-  private sanitizer = inject(DomSanitizer);
-
-  private markdownIt = MarkdownIt({
-    highlight: (str, lang) => {
-      if (lang === 'html') {
-        const iframe = document.createElement('iframe');
-        iframe.classList.add('html-view');
-        iframe.srcdoc = str;
-        iframe.sandbox = '';
-        return iframe.innerHTML;
-      }
-
-      return str;
-    },
-  });
+  // private sanitizer = inject(DomSanitizer);
 
   render(value: string, tagClassMap?: Record<string, string[]>) {
-    if (tagClassMap) {
-      this.applyTagClassMap(tagClassMap);
-    }
-    const htmlString = this.markdownIt.render(value);
-    this.unapplyTagClassMap();
-    return this.sanitizer.sanitize(SecurityContext.HTML, htmlString);
-  }
-
-  private applyTagClassMap(tagClassMap: Record<string, string[]>) {
-    Object.entries(tagClassMap).forEach(([tag, classes]) => {
-      let tokenName;
-      switch (tag) {
-        case 'p':
-          tokenName = 'paragraph';
-          break;
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          tokenName = 'heading';
-          break;
-        case 'ul':
-          tokenName = 'bullet_list';
-          break;
-        case 'ol':
-          tokenName = 'ordered_list';
-          break;
-        case 'li':
-          tokenName = 'list_item';
-          break;
-        case 'a':
-          tokenName = 'link';
-          break;
-        case 'strong':
-          tokenName = 'strong';
-          break;
-        case 'em':
-          tokenName = 'em';
-          break;
-      }
-
-      if (!tokenName) {
-        return;
-      }
-
-      const key = `${tokenName}_open`;
-      const original = this.markdownIt.renderer.rules[key];
-      this.originalClassMap.set(key, original);
-
-      this.markdownIt.renderer.rules[key] = (tokens, idx, options, env, self) => {
-        const token = tokens[idx];
-        for (const clazz of classes) {
-          token.attrJoin('class', clazz);
-        }
-
-        if (original) {
-          return original.call(this, tokens, idx, options, env, self);
-        } else {
-          return self.renderToken(tokens, idx, options);
-        }
-      };
-    });
-  }
-
-  private unapplyTagClassMap() {
-    for (const [key, original] of this.originalClassMap) {
-      this.markdownIt.renderer.rules[key] = original;
-    }
-
-    this.originalClassMap.clear();
+    return `<pre>${value}</pre>`;
   }
 }

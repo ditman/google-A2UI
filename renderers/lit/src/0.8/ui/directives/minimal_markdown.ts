@@ -14,12 +14,14 @@
  limitations under the License.
  */
 
-import { html, TemplateResult } from "lit";
+import { html } from "lit";
 import {
   directive,
   Directive,
+  DirectiveResult,
   PartInfo,
 } from "lit/directive.js";
+import * as Types from "@a2ui/web_core/types/types";
 
 /**
  * A minimal Markdown renderer that only supports a few tags.
@@ -27,7 +29,7 @@ import {
  * Configure @a2ui/lit-markdown, or your custom Markdown renderer
  * to actually parse and render Markdown in your app.
  */
-class MinimalMarkdownRendererDirective extends Directive {
+class MinimalMarkdownRendererDirective extends Directive implements Types.MarkdownRenderer<DirectiveResult> {
   static _warned = false;
 
   constructor(partInfo: PartInfo) {
@@ -49,7 +51,7 @@ class MinimalMarkdownRendererDirective extends Directive {
    * Resist the urge to "improve" this method. Instead, use a more proper
    * Markdown renderer. This is just a placeholder.
    */
-  render(markdown: string, _tagClassMap?: Record<string, string[]>) : TemplateResult {
+  render(markdown: string, _tagClassMap?: Types.MarkdownRendererTagClassMap) : DirectiveResult {
     if (markdown.startsWith('# ')) {
       let classes = this.getClasses("h1", _tagClassMap);
       return html`<h1 class="${classes}">${markdown.substring(2)}</h1>`;
@@ -84,7 +86,7 @@ class MinimalMarkdownRendererDirective extends Directive {
    * @param _tagClassMap The class map to use.
    * @returns A space-separated list of class names.
    */
-  getClasses(tag: string, _tagClassMap?: Record<string, string[]>) {
+  getClasses(tag: string, _tagClassMap?: Types.MarkdownRendererTagClassMap) {
     return _tagClassMap?.[tag]?.join(' ') ?? '';
   }
 }

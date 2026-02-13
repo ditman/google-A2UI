@@ -46,6 +46,7 @@ export class Text extends Root {
   @property({ reflect: true, attribute: "usage-hint" })
   accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
 
+  // This is a lit directive, that internally implements the Types.MarkdownRenderer interface.
   @consume({context: Context.markdown})
   accessor markdownRenderer = minimalMarkdown;
 

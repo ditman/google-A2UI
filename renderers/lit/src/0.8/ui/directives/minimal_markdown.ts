@@ -40,7 +40,7 @@ class MinimalMarkdownRendererDirective extends Directive implements Types.Markdo
     if (!MinimalMarkdownRendererDirective._warned) {
       console.warn("[MinimalMarkdownRendererDirective]",
         "is a placeholder Markdown renderer. Most features are not supported.\n",
-        "Install `@a2ui/lit-markdown` for a fully-featured Markdown renderer.");
+        "Use `@a2ui/markdown-it-lit` for a fully-featured Markdown renderer.");
       MinimalMarkdownRendererDirective._warned = true;
     }
   }

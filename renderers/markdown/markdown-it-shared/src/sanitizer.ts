@@ -21,4 +21,4 @@
  */
 export const sanitizer = {
   sanitize: (html: string) => html,
-}
+};

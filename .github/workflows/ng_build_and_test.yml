@@ -51,13 +51,9 @@ jobs:
         working-directory: ./renderers/lit
         run: npm run build
 
-      - name: Install renderer deps
-        working-directory: ./renderers/angular
-        run: npm i
-
-      - name: Build Angular renderer
-        working-directory: ./renderers/angular
-        run: npm run build
+      - name: Build Angular renderer and its dependencies
+        working-directory: ./samples/client/angular
+        run: npm run build:renderer
 
       - name: Install top-level deps
         working-directory: ./samples/client/angular

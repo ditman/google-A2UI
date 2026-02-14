@@ -14,10 +14,12 @@
  limitations under the License.
  */
 
-import { rawMarkdownRenderer, TagClassMap } from "./raw-markdown.js";
-import { sanitizer } from "./sanitizer.js";
+import { rawMarkdownRenderer } from './raw-markdown.js';
+import { sanitizer } from './sanitizer.js';
+import * as Types from '@a2ui/web_core';
 
-// TODO: Do we need to export the TagClassMap type?
+// Export the class and type for consumers
+export { MarkdownItRenderer } from './raw-markdown.js';
 
 /**
  * A Markdown renderer using markdown-it and dompurify.
@@ -29,10 +31,8 @@ export const markdownRenderer = {
    * @param tagClassMap A map of tag names to classes.
    * @returns The rendered HTML as a string.
    */
-  render: (value: string, tagClassMap?: TagClassMap) => {
+  render: (value: string, tagClassMap?: Types.MarkdownRendererTagClassMap) => {
     const htmlString = rawMarkdownRenderer.render(value, tagClassMap);
     return sanitizer.sanitize(htmlString);
   },
-
-  // TODO: Do we need an unsanitized renderer?
 };

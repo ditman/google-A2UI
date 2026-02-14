@@ -15,32 +15,23 @@
  */
 
 import markdownit from 'markdown-it';
-import { sanitizer } from "./sanitizer";
-
-/**
- * A map of tag names to classes to apply when rendering a tag.
- *
- * For example, the following TagClassMap would apply the `a2ui-paragraph` class
- * to all `<p>` tags:
- *
- * `{ "p": ["a2ui-paragraph"] }`
- */
-export type TagClassMap = Record<string, string[]>;
+import { sanitizer } from './sanitizer.js';
+import * as Types from '@a2ui/web_core';
 
 /**
  * A pre-configured instance of markdown-it to render markdown in A2UI web.
  *
  * This renderer does not perform any sanitization of the outgoing HTML.
  */
-class MarkdownItCore {
+export class MarkdownItRenderer {
   private markdownIt = markdownit({
     highlight: (str, lang) => {
       switch (lang) {
-        case "html": {
-          const iframe = document.createElement("iframe");
-          iframe.classList.add("html-view");
+        case 'html': {
+          const iframe = document.createElement('iframe');
+          iframe.classList.add('html-view');
           iframe.srcdoc = str;
-          iframe.sandbox = "";
+          iframe.sandbox.add('');
           return iframe.innerHTML;
         }
 
@@ -50,67 +41,40 @@ class MarkdownItCore {
     },
   });
 
+  constructor() {
+    this.registerTagClassMapRules();
+  }
+
   /**
-   * Applies a tag class map to the markdown-it renderer.
-   *
-   * @param tagClassMap The tag class map to apply.
+   * Registers rules to apply tag class maps from the environment.
    */
-  private applyTagClassMap(tagClassMap: TagClassMap) {
-    Object.entries(tagClassMap).forEach(([tag]) => {
-      let tokenName;
-      switch (tag) {
-        case "p":
-          tokenName = "paragraph";
-          break;
-        case "h1":
-        case "h2":
-        case "h3":
-        case "h4":
-        case "h5":
-        case "h6":
-          tokenName = "heading";
-          break;
-        case "ul":
-          tokenName = "bullet_list";
-          break;
-        case "ol":
-          tokenName = "ordered_list";
-          break;
-        case "li":
-          tokenName = "list_item";
-          break;
-        case "a":
-          tokenName = "link";
-          break;
-        case "strong":
-          tokenName = "strong";
-          break;
-        case "em":
-          tokenName = "em";
-          break;
-      }
+  private registerTagClassMapRules() {
+    const rulesToProxy = [
+      'paragraph_open',
+      'heading_open',
+      'bullet_list_open',
+      'ordered_list_open',
+      'list_item_open',
+      'link_open',
+      'strong_open',
+      'em_open',
+    ];
 
-      if (!tokenName) {
-        return;
-      }
-
-      const key = `${tokenName}_open`;
-      this.markdownIt.renderer.rules[key] = (
-        tokens,
-        idx,
-        options,
-        _env,
-        self
-      ) => {
+    for (const ruleName of rulesToProxy) {
+      this.markdownIt.renderer.rules[ruleName] = (tokens, idx, options, env, self) => {
         const token = tokens[idx];
-        const tokenClasses = tagClassMap[token.tag] ?? [];
-        for (const clazz of tokenClasses) {
-          token.attrJoin("class", clazz);
+        const tagClassMap = env?.tagClassMap as Types.MarkdownRendererTagClassMap | undefined;
+
+        if (tagClassMap) {
+          const tokenClasses = tagClassMap[token.tag] ?? [];
+          for (const clazz of tokenClasses) {
+            token.attrJoin('class', clazz);
+          }
         }
 
         return self.renderToken(tokens, idx, options);
       };
-    });
+    }
   }
 
   /**
@@ -120,12 +84,8 @@ class MarkdownItCore {
    *
    * This method does not perform any sanitization of the outgoing HTML.
    */
-  render(value: string, tagClassMap?: TagClassMap) {
-    if (tagClassMap) {
-      this.applyTagClassMap(tagClassMap);
-    }
-    const htmlString = this.markdownIt.render(value);
-    return htmlString;
+  render(value: string, tagClassMap?: Types.MarkdownRendererTagClassMap) {
+    return this.markdownIt.render(value, { tagClassMap });
   }
 }
 
@@ -134,4 +94,4 @@ class MarkdownItCore {
  *
  * This renderer does not perform any sanitization of the outgoing HTML.
  */
-export const rawMarkdownRenderer = new MarkdownItCore();
+export const rawMarkdownRenderer = new MarkdownItRenderer();

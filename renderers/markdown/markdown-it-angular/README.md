@@ -18,12 +18,18 @@ npm run test:watch
 
 ### Code Formatting
 
-This project uses [Prettier](https://prettier.io/) for code formatting. The configuration is defined in `package.json`.
+This project uses [Prettier](https://prettier.io/) for code formatting. The configuration is defined in `../.prettierrc`.
 
 To format all files in the project:
 
 ```bash
 npm run format
+```
+
+To check the format, run:
+
+```bash
+npx prettier --check .
 ```
 
 Most IDEs (like VS Code) can be configured to **Format On Save** using the local Prettier version and configuration. This is the recommended workflow.
